@@ -229,12 +229,23 @@ def main(input_pdb, CATH_database, outfile, distance, coverage, tempfile):
         combs = itertools.combinations(threshold_pairs.keys(), r)
         for comb in combs:
             covered_residues = set()
+            coverages = []
             for target_name in comb:
                 covered_residues.update(threshold_pairs[target_name])
+                if not len(coverages):
+                    coverages.append(
+                        len(covered_residues) / query_nres
+                    )
+                else:
+                    coverages.append(
+                        len(covered_residues) / query_nres - sum(coverages)
+                    )
             percent_covered = len(covered_residues) / query_nres
             if percent_covered >= coverage:
                 print((f"Coverage of {percent_covered:.2%} "
                        f"achieved with {r} CATH domains: {', '.join(comb)}"))
+                print("Coverage details: " + ", ".join(f"{c:.2%}" 
+                                                       for c in coverages))
                 if outfile:
                     with open(outfile, 'a') as out_f:
                         out_f.write(f"{input_pdb}\t{','.join(comb)}\n")
