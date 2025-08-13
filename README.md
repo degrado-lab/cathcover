@@ -2,7 +2,7 @@
 Determine the number of CATH domains required to greedily cover a PDB structure.
 
 ## Description
-This repository follows the method used by [Ingraham et al.](https://www.nature.com/articles/s41586-023-06728-8) to determine the novelty of protein folds by determining the number of CATH domains required to greedily cover 80% of a fold at 5 Angstroms RMSD per cover. Optional command line arguments allow the user to adjust the 80% or 5-Angstrom thresholds.
+This repository follows the method used by [Ingraham et al.](https://www.nature.com/articles/s41586-023-06728-8) to determine the novelty of a query protein fold by determining the number of CATH domains required to greedily cover 80% of a fold with residues that lie within a CA-CA distance of 5 Angstroms of the corresponding residue in the query. Optional command line arguments allow the user to adjust the 80% or 5-Angstrom thresholds.
 
 ## Installation
 To use this repository, one must install NumPy into the local environment:
@@ -14,7 +14,7 @@ $ pip install numpy
 Alternatively, one may create an environment with NumPy:
 
 ```bash
-$ conda create --name env_numpy numpy
+$ conda create --name env_cathcover numpy
 ```
 
 One must then install the Foldseek binaries:
@@ -41,11 +41,19 @@ $ tar -xvzf cath-dataset-nonredundant-S40.pdb.tgz
 $ for f in $HOME/dompdb; do mv -- "$f" "$f.pdb"; done
 ```
 
-## Usage
-To use the software, simply provide the `cathcover.py` script with the path to the PDB file for which you wish to calculate the coverage and the path of the CATHdb folder you downloaded:
+To accelerate future Foldseek searches, it is helpful to create a Foldseek database object:
 
 ```bash
-$ python cathcover/cathcover.py mypdb.pdb $HOME/dompdb
+$ mkdir CATHdb
+$ cd CATHdb
+$ foldseek createdb $HOME/dompdb CATHdb
 ```
 
-The script will run and return the number of CATH structures required to greedily cover the PDB file of interest at a 5-Angstrom RMSD threshold. By default, these are printed to the display, although the `-o`, or `--outfile`, argument may be used to specify an output file for this information. The `-r`, or `--rmsd`, argument may be used to adjust the per-cover RMSD threshold from a default of 5 Angstroms, and the `-c`, or `--coverage`, argument may be used to adjust the proportion of residues that must be covered from a default of 0.8.
+## Usage
+To use the software, simply provide the `cathcover.py` script with the path to the PDB file for which you wish to calculate the coverage and the path of the CATHdb database file you created:
+
+```bash
+$ python cathcover/cathcover.py mypdb.pdb $HOME/CATHdb/CATHdb
+```
+
+The script will run and return the number of CATH structures required to greedily cover the PDB file of interest at a 5-Angstrom CA-CA distance threshold. By default, these are printed to the display, although the `-o`, or `--outfile`, argument may be used to specify an output file for this information. The `-d`, or `--distance`, argument may be used to adjust the per-cover distance threshold from a default of 5 Angstroms, and the `-c`, or `--coverage`, argument may be used to adjust the proportion of residues that must be covered from a default of 0.8. The `-t`, or `--tempfile`, argument specifies the temporary directory in which Foldseek files will be output, with `/tmp` as the default.
