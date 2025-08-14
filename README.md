@@ -17,6 +17,18 @@ Alternatively, one may create an environment with NumPy:
 $ conda create --name env_cathcover numpy
 ```
 
+Optionally, one can also ensure that PyMOL is installed into one's environment to enable output of PSEs with the aligned CATH domains (vide infra):
+
+```bash
+pip install numpy pymol-open-source
+```
+
+Or, via conda:
+
+```bash
+conda create --name env_cathcover numpy pymol-open-source
+```
+
 One must then install the Foldseek binaries:
 
 ```bash
@@ -56,4 +68,4 @@ To use the software, simply provide the `cathcover.py` script with the path to t
 $ python cathcover/cathcover.py mypdb.pdb $HOME/CATHdb/CATHdb
 ```
 
-The script will run and return the number of CATH structures required to greedily cover the PDB file of interest at a 5-Angstrom CA-CA distance threshold. By default, these are printed to the display, although the `-o`, or `--outfile`, argument may be used to specify an output file for this information. The `-d`, or `--distance`, argument may be used to adjust the per-cover distance threshold from a default of 5 Angstroms, and the `-c`, or `--coverage`, argument may be used to adjust the proportion of residues that must be covered from a default of 0.8. The `-t`, or `--tempfile`, argument specifies the temporary directory in which Foldseek files will be output, with `/tmp` as the default.
+The script will run and return the number of CATH structures required to greedily cover the PDB file of interest at a 5-Angstrom CA-CA distance threshold. By default, these are printed to the display, although the `-o`, or `--outfile`, argument may be used to specify an output file for this information. The `-d`, or `--distance`, argument may be used to adjust the per-cover distance threshold from a default of 5 Angstroms, and the `-c`, or `--coverage`, argument may be used to adjust the proportion of residues that must be covered from a default of 0.8. The `-t`, or `--tempfile`, argument specifies the temporary directory in which Foldseek files will be output, with `/tmp` as the default. Lastly, the `-p`, or `--pse-outfile`, argument allows one to output a PSE file with the aligned structures of the covering CATH domains shown alongside the query protein and the matching residues colored in the same color. This option requires PyMOL to be in the environment.
